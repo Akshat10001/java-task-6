@@ -1,0 +1,73 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.ArrayList;
+
+public class ToDoApp {
+    private JFrame frame;
+    private JTextField taskField;
+    private DefaultListModel<String> taskListModel;
+    private JList<String> taskList;
+    private JButton addButton, deleteButton, doneButton;
+
+    public ToDoApp() {
+        frame = new JFrame("To-Do List");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(400, 400);
+
+        taskField = new JTextField(20);
+        addButton = new JButton("Add Task");
+        deleteButton = new JButton("Delete Task");
+        doneButton = new JButton("Mark as Done");
+
+        taskListModel = new DefaultListModel<>();
+        taskList = new JList<>(taskListModel);
+        JScrollPane scrollPane = new JScrollPane(taskList);
+
+        JPanel inputPanel = new JPanel();
+        inputPanel.add(taskField);
+        inputPanel.add(addButton);
+
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.add(doneButton);
+        buttonPanel.add(deleteButton);
+
+        frame.getContentPane().add(BorderLayout.NORTH, inputPanel);
+        frame.getContentPane().add(BorderLayout.CENTER, scrollPane);
+        frame.getContentPane().add(BorderLayout.SOUTH, buttonPanel);
+
+        // Event: Add Task
+        addButton.addActionListener(e -> {
+            String task = taskField.getText().trim();
+            if (!task.isEmpty()) {
+                taskListModel.addElement(task);
+                taskField.setText("");
+            }
+        });
+
+        // Event: Delete Task
+        deleteButton.addActionListener(e -> {
+            int selectedIndex = taskList.getSelectedIndex();
+            if (selectedIndex != -1) {
+                taskListModel.remove(selectedIndex);
+            }
+        });
+
+        // Event: Mark as Done
+        doneButton.addActionListener(e -> {
+            int selectedIndex = taskList.getSelectedIndex();
+            if (selectedIndex != -1) {
+                String task = taskListModel.get(selectedIndex);
+                if (!task.startsWith("[Done] ")) {
+                    taskListModel.set(selectedIndex, "[Done] " + task);
+                }
+            }
+        });
+
+        frame.setVisible(true);
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(ToDoApp::new);
+    }
+}
